@@ -2,3 +2,6 @@ fastapi[standard]
 pydantic-settings
 pgvector
 sqlmodel
+psycopg2-binary
+openai
+httpx

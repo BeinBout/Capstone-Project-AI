@@ -1,15 +1,26 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-class AIConfig(BaseSettings):
-    embed_model: str = ""
-
-
 class Settings(BaseSettings):
-    REQ_API_KEY: str = ""
+    # HTTP Request API Key
+    BEINBOUT_AI_CALL_KEY: str = ""
+    SERVICE_MODE: str = ""
+    
+    # Database URL
     DATABASE_URL: str = ""
+    
+    # Azure Key Credentials
+    AZURE_AI_KEY_CREDENTIALS: str = ""
+    AZURE_AI_ENDPOINT: str = ""
+    AZURE_AI_API_VERSION: str = ""
+    
+    AZURE_AI_EMBEDDING_MODEL_NAME: str = ""
+    AZURE_AI_EMBEDDING_DEPLOYMENT: str = ""
+    
+    AZURE_AI_LLM_MODEL_NAME: str = ""
+    AZURE_AI_LLM_DEPLOYMENT: str = ""
+    
     
     model_config = SettingsConfigDict(env_file=".env")
 
 
 settings = Settings()
-ai_config = AIConfig()
