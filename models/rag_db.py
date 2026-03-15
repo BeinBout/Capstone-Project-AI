@@ -5,9 +5,7 @@ from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from pgvector.sqlalchemy import Vector
 import sqlalchemy as sa
 
-class RagDb(SQLModel, table=True):
-    __tablename__: str = "rag_db" #type: ignore
-
+class Rag_db(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
 
     content: str = Field(sa_column=Column(sa.Text, nullable=False))
