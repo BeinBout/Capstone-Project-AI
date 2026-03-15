@@ -1,6 +1,6 @@
 from sqlmodel import Session, create_engine, SQLModel, text
 from .config import settings
-from models.rag_db import Rag_db
+from models.rag_db import Rag_db # noqa: F401
 
 engine = create_engine(
     settings.DATABASE_URL, 
