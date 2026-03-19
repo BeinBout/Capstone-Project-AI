@@ -7,7 +7,7 @@ client = AsyncAzureOpenAI(
     api_key=settings.AZURE_AI_KEY_CREDENTIALS
 )
 
-async def embedding(input: str):
+async def embedding(input: str) -> dict:
     try:
         response = await client.embeddings.create(
             input=input,

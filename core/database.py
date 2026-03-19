@@ -1,4 +1,4 @@
-from sqlmodel import Session, create_engine, SQLModel, text
+from sqlmodel import create_engine, SQLModel, text
 from .config import settings
 from models.rag_db import Rag_db # noqa: F401
 
@@ -14,8 +14,3 @@ def create_db_and_tables():
         conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
         conn.commit()
     SQLModel.metadata.create_all(bind=engine)
-
-def get_session():
-    with Session(engine) as session:
-        yield session
-
