@@ -1,6 +1,7 @@
 from pydantic import BaseModel
+from typing import Type
 
-def create_tool(name: str, description: str, schema_model: BaseModel) -> dict:
+def create_tool(name: str, description: str, schema_model: Type[BaseModel]) -> dict:
     return {
         "type": "function",
         "function": {

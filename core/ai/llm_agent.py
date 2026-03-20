@@ -1,13 +1,18 @@
 from openai import OpenAI
+from openai.types.chat import ChatCompletionMessageToolCall
+from typing import Type, cast
+from pydantic import BaseModel, ValidationError
+
 from utils.ai.execute_tool import execute_tool
 
 CLIENT = OpenAI(
     api_key="sk-46d8acc7458d4d63b36e4e05c7eacbd2",
-    base_url="https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
+    base_url="https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
 )
 MODEL = "qwen3.5-plus"
 
-async def chat_agent(messages: list, tools: list):
+
+async def chat_agent(messages: list, tools: list, structured_output: Type[BaseModel]):
     while True:
         print("thinking...")
         response = CLIENT.chat.completions.create(
@@ -16,17 +21,41 @@ async def chat_agent(messages: list, tools: list):
             tools=tools,
             tool_choice="auto"
         )
-        
+
         agent_message = response.choices[0].message
         messages.append(agent_message)
-        
-        if agent_message.tool_calls is None:
-            print(f"\nFinal Result:\n{agent_message.content}")
-            break 
-            
-        for tool_call in agent_message.tool_calls:
+
+        if not agent_message.tool_calls:
+            print("thinking done")
+            break
+
+        for R_tool_call in agent_message.tool_calls:
+            tool_call = cast(ChatCompletionMessageToolCall, R_tool_call)
             print(f"exec tool: {tool_call.function.name}")
             tool_message = await execute_tool(tool_call)
-            
-            print(f"Tool {tool_call.function.name} return : {tool_message['content'][:100]}...") 
+
+            print(
+                f"Tool {tool_call.function.name} return : {tool_message['content'][:100]}..."
+            )
             messages.append(tool_message)
+            
+    print("making final result...")
+    
+    final_response = CLIENT.chat.completions.create(
+        model=MODEL,
+        messages=messages,
+        response_format={"type": "json_object"}
+    )
+    
+    final_result = final_response.choices[0].message.content
+    
+    if final_result is None:
+        raise ValueError("LLM returned no content to parse")
+        
+    try:
+        parsed_pydantic = structured_output.model_validate_json(final_result)
+        return parsed_pydantic.model_dump()
+        
+    except ValidationError as e:
+        
+        print(f"Pydantic LLM err: {e}")
