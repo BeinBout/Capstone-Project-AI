@@ -2,11 +2,12 @@ from contextlib import asynccontextmanager
 from fastapi import Depends, FastAPI
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi.middleware.cors import CORSMiddleware
+from core.database import create_db_and_tables
 
 from api.deps import req_validate
 from api.route import initial_persona
-from core.database import create_db_and_tables
-
+from api.route import daily_journal
+from api.route import weekly_checkup
 
 @asynccontextmanager
 async def startup(app: FastAPI):
@@ -34,8 +35,21 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 app.include_router(
     initial_persona.router,
     prefix="/api",
     dependencies=[Depends(req_validate)],
+)
+
+app.include_router(
+    daily_journal.router,
+    prefix="/api",
+    dependencies=[Depends(req_validate)],
+)
+
+app.include_router(
+    weekly_checkup.router,
+    prefix="/api",
+    dependencies=[Depends(req_validate)]
 )

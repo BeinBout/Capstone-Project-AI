@@ -48,10 +48,8 @@ You have access to a tool called retrieve_information.
 BEFORE generating any analysis, you MUST call retrieve_information to search for relevant psychological knowledge.
 ALWAYS translate your search query to English.
 Build query from dominant patterns in checkup answers + weekly_metrics.
-Example queries:
-- "weekly burnout recovery strategies sleep deprivation young adults"
-- "significant stress deterioration week over week coping mechanisms"
-- "anxiety improvement mental health progress Gen Z students"
+NO CONTAINS "Gen Z", just input arguments with general sentences, and if you still doesnt found any information, call it again with differents arguments.
+If you feel the information from RAG too little, call it again until you feel it's enough
 
 ## LANGUAGE RULES
 - checkup_answers (question_text, selected_option): Bahasa Indonesia

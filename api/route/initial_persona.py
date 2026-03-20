@@ -9,10 +9,10 @@ import json
 router = APIRouter(tags=["Initial Persona"])
 
 @router.post('/initial_persona')
-async def initial_persona(body: InitialPersona):
+async def initial_persona(payload: InitialPersona):
     messages: list[dict] = [
         {"role": "system", "content": SYSTEM_PROMPT_INITIAL_PERSONA},
-        {"role": "user", "content": f"{json.dumps(body.model_dump(), indent=2)}"}
+        {"role": "user", "content": f"{json.dumps(payload.model_dump(), indent=2)}"}
     ]
     
     return await chat_agent(messages, tools, LLMInitialPersona)
