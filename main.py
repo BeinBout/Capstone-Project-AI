@@ -1,9 +1,12 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Depends
-from api.route import initial_persona
-from api.deps import req_validate
-from core.database import create_db_and_tables
+from fastapi import Depends, FastAPI
 from sqlalchemy.exc import SQLAlchemyError
+from fastapi.middleware.cors import CORSMiddleware
+
+from api.deps import req_validate
+from api.route import initial_persona
+from core.database import create_db_and_tables
+
 
 @asynccontextmanager
 async def startup(app: FastAPI):
@@ -13,16 +16,24 @@ async def startup(app: FastAPI):
         print("✅ Database Sync Done")
     except SQLAlchemyError as e:
         print(f"DATABASE ERROR: {e}")
-        raise e 
+        raise e
     except Exception as e:
         print(f"SOMETHING ERROR: {e}")
         raise e
-    
+
     yield
     print("Stopping Service...")
 
+
 app = FastAPI(lifespan=startup)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.include_router(
     initial_persona.router,
     prefix="/api",
