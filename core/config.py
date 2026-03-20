@@ -4,7 +4,6 @@ class Settings(BaseSettings):
     # HTTP Request API Key
     BEINBOUT_AI_CALL_KEY: str = ""
     SERVICE_MODE: str = ""
-    WEBHOOK_URL: str = ""
 
     # Database URL
     DATABASE_URL: str = ""
