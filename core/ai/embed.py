@@ -1,5 +1,6 @@
 from openai import AsyncAzureOpenAI
 from core.config import settings
+from loguru import logger
 
 client = AsyncAzureOpenAI(
     api_version=settings.AZURE_AI_API_VERSION,
@@ -20,5 +21,5 @@ async def embedding(input: str) -> dict:
             "model": response.model
         }
     except Exception as e:
-        print(f"Azure AI API Error: \n {e}")
+        logger.error(f"Azure AI API Error: \n {e}")
         raise e

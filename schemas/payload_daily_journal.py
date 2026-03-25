@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 
 
 class UserContext(BaseModel):
@@ -31,5 +31,5 @@ class Journal(BaseModel):
 class DailyJournal(BaseModel):
     user_context: UserContext
     current_persona: CurrentPersona
-    recent_trend: RecentTrend
+    recent_trend: Optional[RecentTrend]
     journal: Journal

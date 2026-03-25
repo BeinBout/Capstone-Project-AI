@@ -14,3 +14,9 @@ def create_db_and_tables():
         conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
         conn.commit()
     SQLModel.metadata.create_all(bind=engine)
+    
+    with engine.connect() as conn:
+        conn.execute(text("""
+            CREATE INDEX IF NOT EXISTS ix_rag_db_embedding_hnsw 
+            ON rag_db USING hnsw (embedding vector_ip_ops)
+        """))
