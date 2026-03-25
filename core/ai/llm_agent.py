@@ -2,6 +2,7 @@ from openai import OpenAI
 from openai.types.chat import ChatCompletionMessageToolCall
 from typing import Type, cast
 from pydantic import BaseModel, ValidationError
+from loguru import logger
 
 from utils.ai.execute_tool import execute_tool
 
@@ -14,7 +15,7 @@ MODEL = "qwen3.5-plus"
 
 async def chat_agent(messages: list, tools: list, structured_output: Type[BaseModel]):
     while True:
-        print("thinking...")
+        logger.info("thinking...")
         response = CLIENT.chat.completions.create(
             model=MODEL,
             messages=messages,
@@ -26,20 +27,20 @@ async def chat_agent(messages: list, tools: list, structured_output: Type[BaseMo
         messages.append(agent_message)
 
         if not agent_message.tool_calls:
-            print("thinking done")
+            logger.info("thinking done")
             break
 
         for R_tool_call in agent_message.tool_calls:
             tool_call = cast(ChatCompletionMessageToolCall, R_tool_call)
-            print(f"exec tool: {tool_call.function.name}")
+            logger.debug(f"exec tool: {tool_call.function.name}")
             tool_message = await execute_tool(tool_call)
 
-            print(
+            logger.debug(
                 f"Tool {tool_call.function.name} return : {tool_message['content'][:100]}..."
             )
             messages.append(tool_message)
             
-    print("making final result...")
+    logger.info("making final result...")
     
     final_response = CLIENT.chat.completions.create(
         model=MODEL,
@@ -58,4 +59,4 @@ async def chat_agent(messages: list, tools: list, structured_output: Type[BaseMo
         
     except ValidationError as e:
         
-        print(f"Pydantic LLM err: {e}")
+        logger.error(f"Pydantic LLM err: {e}")

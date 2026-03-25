@@ -3,6 +3,7 @@ from fastapi import Depends, FastAPI
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi.middleware.cors import CORSMiddleware
 from core.database import create_db_and_tables
+from loguru import logger
 
 from api.deps import req_validate
 from api.route import initial_persona
@@ -12,18 +13,18 @@ from api.route import weekly_checkup
 @asynccontextmanager
 async def startup(app: FastAPI):
     try:
-        print("Syncing Database...")
+        logger.info("Syncing Database...")
         create_db_and_tables()
-        print("✅ Database Sync Done")
+        logger.info("✅ Database Sync Done")
     except SQLAlchemyError as e:
-        print(f"DATABASE ERROR: {e}")
+        logger.critical(f"DATABASE ERROR: {e}")
         raise e
     except Exception as e:
-        print(f"SOMETHING ERROR: {e}")
+        logger.error(f"SOMETHING ERROR: {e}")
         raise e
 
     yield
-    print("Stopping Service...")
+    logger.info("Stopping Service...")
 
 
 app = FastAPI(lifespan=startup)

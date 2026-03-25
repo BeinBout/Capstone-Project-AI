@@ -1,39 +1,24 @@
-from pydantic import BaseModel, Field
-from typing import List
 import json
+from pydantic import BaseModel
+from typing import List, Literal
 
-class UserContext(BaseModel):
-    umur: int = Field(..., gt=0)
-    berat_badan: int = Field(..., gt=0)
-    tinggi_badan: int = Field(..., gt=0)
+class Recommendation(BaseModel):
+    focus: str
+    description: str
 
-class CurrentPersona(BaseModel):
+class AiInsights(BaseModel):
     risk_level: str
     risk_score: int
     dominant_stressor: List[str]
     personality_summary: str
-
-class WeeklyMetrics(BaseModel):
-    avg_mood_intensity: float
-    avg_sleep_hours: float = Field(..., ge=0, le=24.0) 
-    dominant_mood: str
-    negative_sentiment_ratio: float = Field(..., ge=-1.0, le=1.0) 
-    journal_entries_count: int = Field(..., ge=0)
-    anomaly_count: int = Field(..., ge=0)
-
-class CheckupAnswer(BaseModel):
-    category: str
-    question_text: str
-    selected_option: str
-    emotion_tag: str
-    score_value: int = Field(..., ge=0)
+    recommendations: List[Recommendation]
+    progress_status: Literal["significant_improvement", "stable", "significant_deterioration"]
+    weekly_insight: str
+    ai_low_confidence: bool
 
 class LLMWeeklyCheckup(BaseModel):
-    user_context: UserContext
-    current_persona: CurrentPersona
-    weekly_metrics: WeeklyMetrics
-    checkup_answers: List[CheckupAnswer]
-    dominant_categories: List[str]
+    ai_summary: str
+    ai_insights: AiInsights
     
 
 

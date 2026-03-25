@@ -1,5 +1,6 @@
 import json
 import inspect
+from loguru import logger
 
 from utils.ai.tools.retrieve_information import retrieve_information
 
@@ -15,10 +16,10 @@ async def execute_tool(tool_call) -> dict:
     except json.JSONDecodeError:
         args = {}
 
-    print(f"execute tool {func_name} with args: {args}")
+    logger.debug(f"execute tool {func_name} with args: {args}")
 
     if func_name not in TOOL_MAP:
-        print(f"function {func_name} not found in TOOL_MAP")
+        logger.info(f"function {func_name} not found in TOOL_MAP")
         result_data = {"error": f"Function {func_name} isnt available."}
     else:
         func_to_call = TOOL_MAP[func_name]
@@ -30,7 +31,7 @@ async def execute_tool(tool_call) -> dict:
                 result_data = func_to_call(**args)
                 
         except Exception as e:
-            print(f"func exec failed for {func_name}: {e}")
+            logger.error(f"func exec failed for {func_name}: {e}")
             result_data = {"error": f"Failed to execute {func_name}: {str(e)}"}
 
     return {
