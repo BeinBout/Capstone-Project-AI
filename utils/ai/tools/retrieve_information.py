@@ -1,9 +1,9 @@
 from core.ai.embed import embedding
 from utils.rag_search import rag_search
 
-async def retrieve_information(input: str) -> list[dict]:
+async def retrieve_information(input: str, source_type: str | None = None) -> list[dict]:
     vector = await embedding(input)
-    results = await rag_search(vector['embedding'])
+    results = await rag_search(vector['embedding'], source_type=source_type)
     
     return [
         {

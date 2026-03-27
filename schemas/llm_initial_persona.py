@@ -17,7 +17,7 @@ class AiInsights(BaseModel):
         ..., 
         ge=0, 
         le=100, 
-        description="Risk score integer ranging from 0 to 100 (e.g: 62)"
+        description="Risk score integer ranging from 0 to 100 (e.g: 62). RANGING BY YOU, RESULT FROM ALL ANALYZE"
     )
     
     dominant_stressor: List[str] = Field(..., description="List of dominant stressors (e.g: ['academic_pressure', 'sleep_disorder'])")
