@@ -10,7 +10,7 @@ class UserContext(BaseModel):
 
 class CurrentPersona(BaseModel):
     risk_level: str
-    risk_score: str
+    risk_score: int
     dominant_stressor: List[str]
 
 
