@@ -1,17 +1,18 @@
-from openai import OpenAI
+from openai import AzureOpenAI
 from openai.types.chat import ChatCompletionMessageToolCall
 from typing import Type, cast
 from pydantic import BaseModel, ValidationError
 from loguru import logger
+from core.config import settings
 
 from utils.ai.execute_tool import execute_tool
 
-CLIENT = OpenAI(
-    api_key="sk-46d8acc7458d4d63b36e4e05c7eacbd2",
-    base_url="https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+CLIENT = AzureOpenAI(
+    api_version=settings.AZURE_AI_API_VERSION,
+    azure_endpoint=settings.AZURE_AI_ENDPOINT,
+    api_key=settings.AZURE_AI_KEY_CREDENTIALS,
 )
-MODEL = "qwen3.5-plus"
-
+MODEL = settings.AZURE_AI_LLM_MODEL_NAME
 
 async def chat_agent(messages: list, tools: list, structured_output: Type[BaseModel]):
     while True:
@@ -42,21 +43,15 @@ async def chat_agent(messages: list, tools: list, structured_output: Type[BaseMo
             
     logger.info("making final result...")
     
-    final_response = CLIENT.chat.completions.create(
+    final_response = CLIENT.beta.chat.completions.parse(
         model=MODEL,
         messages=messages,
-        response_format={"type": "json_object"}
+        response_format=structured_output
     )
     
-    final_result = final_response.choices[0].message.content
+    final_result = final_response.choices[0].message.parsed
     
     if final_result is None:
         raise ValueError("LLM returned no content to parse")
         
-    try:
-        parsed_pydantic = structured_output.model_validate_json(final_result)
-        return parsed_pydantic.model_dump()
-        
-    except ValidationError as e:
-        
-        logger.error(f"Pydantic LLM err: {e}")
+    return final_result.model_dump()

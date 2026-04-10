@@ -5,14 +5,14 @@ from loguru import logger
 client = AsyncAzureOpenAI(
     api_version=settings.AZURE_AI_API_VERSION,
     azure_endpoint=settings.AZURE_AI_ENDPOINT,
-    api_key=settings.AZURE_AI_KEY_CREDENTIALS
+    api_key=settings.AZURE_AI_KEY_CREDENTIALS,
 )
 
 async def embedding(input: str) -> dict:
     try:
         response = await client.embeddings.create(
             input=input,
-            model=settings.AZURE_AI_EMBEDDING_DEPLOYMENT
+            model=settings.AZURE_AI_EMBEDDING_MODEL_NAME
         )
         
         return {
