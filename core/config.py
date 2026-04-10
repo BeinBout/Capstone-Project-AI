@@ -18,9 +18,13 @@ class Settings(BaseSettings):
 
     AZURE_AI_LLM_MODEL_NAME: str = ""
     AZURE_AI_LLM_DEPLOYMENT: str = ""
-    
 
-    model_config = SettingsConfigDict(env_file=".env")
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_prefix="",
+        case_sensitive=False,
+        env_ignore_empty=True,
+    )
 
 
 settings = Settings()
