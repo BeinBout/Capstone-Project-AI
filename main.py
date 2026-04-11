@@ -54,3 +54,8 @@ app.include_router(
     prefix="/api",
     dependencies=[Depends(req_validate)]
 )
+
+# Azure Readiness Check
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
